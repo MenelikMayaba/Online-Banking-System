@@ -12,6 +12,28 @@ public class UserAccount {
         this.balance = balance;
     }
 
+
+    public double deposit(double amount){
+        if(amount <= 0){
+            throw new IllegalArgumentException("cannot deposit negative");
+        }
+
+        return balance += amount;
+    }
+
+    public double withdraw(double amount){
+        if(amount <= 0){
+            throw new IllegalArgumentException("cannot withdraw negative");
+        }
+
+        if(amount > balance){
+            throw new IllegalArgumentException("cannot withdraw more than balance");
+        }
+
+        return balance -= amount;
+
+    }
+
     public String getName() {
         return name;
     }
