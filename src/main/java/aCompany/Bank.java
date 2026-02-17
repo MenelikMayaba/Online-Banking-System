@@ -1,38 +1,65 @@
 package aCompany;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Bank {
 
     public boolean isLoggedIn;
 
-    UserAccount user = new UserAccount("yaba", "pass123", 1000);
-    UserAccount user2 = new UserAccount("john", "abc123", 200);
+    private UserAccount currentUser;
+
+    private Map<String, UserAccount> accounts = new HashMap<>();
 
 
-        public UserAccount registerUser(UserAccount user){
-        return user;
+        public void registerUser(UserAccount user){
+            accounts.put(user.getName(), user);
     }
 
     public boolean login(String name, String password) {
-            if(user.getName().equals(name) && user.getPassword().equals(password)){
-                return isLoggedIn = true;
-            }else{
-
-                return isLoggedIn = false;
-            }
-
-
+        UserAccount user = accounts.get(name);
+        if (user != null && user.getPassword().equals(password)) {
+            currentUser = user;
+            isLoggedIn = true;
+            return true;
+        }
+        isLoggedIn = false;
+        return false;
     }
 
 
-    public void transfer(String name, int amount) {
+    public void transfer(String name, double amount) {
+        if (!isLoggedIn || currentUser == null) {
+            throw new IllegalStateException("No user logged in");
+        }
+
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Transfer amount must be positive");
+        }
+
+        UserAccount recipient = accounts.get(name);
+        if (recipient == null) {
+            throw new IllegalArgumentException("Receiver not found");
+        }
+
+        if (currentUser.getBalance() < amount) {
+            throw new IllegalStateException("Insufficient funds for transfer");
+        }
+
+        currentUser.withdraw(amount);
+        recipient.deposit(amount);;
+
+
+
     }
 
     public void getCurrentBalance() {
-            user.getBalance();
+            currentUser.getBalance();
     }
 
     public void logout() {
             if(isLoggedIn){
+                currentUser = null;
                 isLoggedIn = false;
             }
     }
